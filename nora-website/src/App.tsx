@@ -1,31 +1,27 @@
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import { galleryLoader } from './loaders';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { GalleryPage } from './routes/GalleryPage';
 import { HomePage } from './routes/HomePage';
 import { ContactPage } from './routes/ContactPage';
 import { ErrorPage } from './routes/ErrorPage';
 import './App.css';
+import { Navbar } from './components/Navbar';
 
 const App = () => {
-  const router = createBrowserRouter([
-    {
-      path: '/',
-      element: <HomePage />,
-      errorElement: <ErrorPage />
-    },
-    {
-      path: '/gallery/:itemId',
-      element: <GalleryPage />,
-      loader: galleryLoader
-    },
-    {
-      path: '/contact',
-      element: <ContactPage />
-    }
-  ]);
-
   //todo: layout goes around router provider
-  return <RouterProvider router={router} />;
+  return (
+    <>
+      <BrowserRouter>
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/gallery" element={<GalleryPage />} />
+          <Route path="/gallery/:id" element={<GalleryPage />} />
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="*" element={<ErrorPage />} />
+        </Routes>
+      </BrowserRouter>
+    </>
+  );
 };
 
 export default App;

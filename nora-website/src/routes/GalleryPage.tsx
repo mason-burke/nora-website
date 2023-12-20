@@ -1,12 +1,12 @@
-import { useLoaderData } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 export const GalleryPage = () => {
-  const itemId = useLoaderData() as string;
+  const params = useParams();
 
   return (
     <>
       gallery
-      <div id="hi">{itemId}</div>
+      <div id="hi">hi {params['id'] ?? 'no id'}</div>
     </>
   );
 };
