@@ -3,14 +3,22 @@
   line-height: 1.5;
   font-weight: 400;
 
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
   background-color: #242424;
-
-  font-synthesis: none;
+  --primary-bg: rgb(255, 218, 228) font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-color: var(--primary-bg);
 }
 
 a {
@@ -20,6 +28,19 @@ a {
 }
 a:hover {
   color: #535bf2;
+}
+
+input {
+  display: block;
+  width: min-content;
+  outline: none;
+  border: none;
+  border-bottom: 2px solid grey;
+  background: none;
+}
+
+::backdrop {
+  opacity: 70%;
 }
 
 body {
