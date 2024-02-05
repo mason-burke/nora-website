@@ -2,11 +2,11 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { GalleryPage } from './routes/GalleryPage';
 import { HomePage } from './routes/HomePage';
 import { ContactPage } from './routes/ContactPage';
-import { ErrorPage } from './routes/ErrorPage';
 import { Navbar } from './components/Navbar';
 import { auth, db } from './firebase-setup';
 import { useEffect, useState } from 'react';
 import { doc, getDoc } from 'firebase/firestore';
+import { Canvas } from './components/Canvas';
 
 const App = () => {
   const [showLogin, setShowLogin] = useState(false);
@@ -36,6 +36,7 @@ const App = () => {
 
   return (
     <>
+      <Canvas />
       <BrowserRouter>
         <Navbar showLogin={showLogin} setShowLogin={setShowLogin} setAdminMode={setAdminMode} />
         <Routes>
@@ -43,7 +44,7 @@ const App = () => {
           <Route path="/gallery" element={<GalleryPage adminMode={adminMode} />} />
           <Route path="/gallery/:id" element={<GalleryPage adminMode={adminMode} />} />
           <Route path="/contact" element={<ContactPage />} />
-          <Route path="*" element={<ErrorPage />} />
+          <Route path="*" element={<HomePage />} />
         </Routes>
       </BrowserRouter>
     </>

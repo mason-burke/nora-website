@@ -9,9 +9,11 @@
   text-align: center;
 
   color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-  --primary-bg: rgb(255, 218, 228) font-synthesis: none;
+  color: rgb(0, 0, 0);
+  /* background-color: #ff75d6; */
+  --primary-bg: #ffc9ef;
+  --link-color: #048a11;
+  font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
