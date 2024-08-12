@@ -1,11 +1,8 @@
-import { doc, setDoc } from 'firebase/firestore';
-import { db, storage } from '../../firebase-setup';
-import { getNextId } from '../../firebase-data';
-import { UploadResult, getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import { createNewItem } from '../../../firebase/firebase-data';
 import { useRef, useState } from 'react';
-import './NewItemWidget.css';
+import './NewItemModal.css';
 
-export const NewItemWidget = () => {
+export const NewItemModal = () => {
   const dialogRef = useRef<HTMLDialogElement | null>(null);
   const createFormRef = useRef<HTMLFormElement | null>(null);
 
@@ -15,14 +12,12 @@ export const NewItemWidget = () => {
     if (!images) return;
     const imgs: React.JSX.Element[] = [];
     for (const image of images) {
-      imgs.push(
-        <img style={{ width: '2rem', aspectRatio: '1/1' }} src={URL.createObjectURL(image)} />
-      );
+      imgs.push(<img style={{ width: '2rem' }} src={URL.createObjectURL(image)} />);
     }
     setImages(imgs);
   };
 
-  const createNewItem = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  const processNewItem = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     if (!createFormRef.current) return;
     const form = createFormRef.current;
 
@@ -36,49 +31,31 @@ export const NewItemWidget = () => {
 
     if (!(title && description && price && images)) return;
 
-    const id = (await getNextId()).toString();
-
-    // upload all of the images under id/{imageNumber}
-    const uploads: Promise<UploadResult>[] = [];
-    for (let i = 0; i < images.length; i++) {
-      uploads.push(uploadBytes(ref(storage, `${id}/${i}`), images[i]));
-    }
-    const uploadResults = await Promise.all(uploads);
-
-    const urls: Promise<string>[] = [];
-    uploadResults.forEach((result) => {
-      urls.push(getDownloadURL(result.ref));
-    });
-    const urlResults = await Promise.all(urls);
-
-    // create database entry keyed by item id, containing title, desc, and price (query for all images later)
-    await setDoc(doc(db, 'items', id), {
-      title: title,
-      description: description,
-      price: price,
-      imageURLs: urlResults
-    });
+    createNewItem(title, description, price, images);
 
     e.currentTarget.classList.remove('loading');
     form.reset();
-    dialogRef.current && dialogRef.current.close();
+    dialogRef.current?.close();
   };
 
   return (
     <>
       <button
+        style={{ position: 'absolute', top: 30, right: 100 }}
         onClick={() => {
-          if (dialogRef.current) dialogRef.current.showModal();
+          dialogRef.current?.showModal();
         }}>
-        +
+        Add New Creation
       </button>
-      <dialog ref={dialogRef}>
+      <dialog
+        ref={dialogRef}
+        onClick={(e) => e.target == dialogRef.current && dialogRef.current?.close()}>
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <button
             style={{ alignSelf: 'end' }}
             onClick={() => {
-              if (createFormRef.current) createFormRef.current.reset();
-              if (dialogRef.current) dialogRef.current.close();
+              createFormRef.current?.reset();
+              dialogRef.current?.close();
               setImages([]);
             }}>
             x
@@ -110,7 +87,7 @@ export const NewItemWidget = () => {
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                createNewItem(e);
+                processNewItem(e);
               }}>
               Create
             </button>

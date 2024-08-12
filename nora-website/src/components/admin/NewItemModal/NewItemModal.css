@@ -1,0 +1,5 @@
+dialog {
+  background-color: var(--light-bg);
+  border: none;
+  border-radius: 10px;
+}

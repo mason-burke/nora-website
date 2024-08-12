@@ -1,6 +1,6 @@
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { Link } from 'react-router-dom';
-import { auth } from '../firebase-setup';
+import { auth, logout } from '../firebase/firebase-setup';
 import { Dispatch, SetStateAction, useState } from 'react';
 
 export interface NavbarProps {
@@ -16,10 +16,15 @@ export const Navbar = ({ showLogin, setShowLogin, setAdminMode }: NavbarProps) =
   const login = async () => {
     if (!email || !password) return;
     //todo: when in production and nora account created, move towards signin only and remove account creation in console
-    signInWithEmailAndPassword(auth, email, password);
-    // await createUserWithEmailAndPassword(auth, email, password);
-    setShowLogin(false);
-    setAdminMode(true);
+    try {
+      const loginResponse = await signInWithEmailAndPassword(auth, email, password);
+      if (loginResponse.user) {
+        setShowLogin(false);
+        setAdminMode(true);
+      }
+    } catch {
+      alert('Invalid login. Please contact your brother for assistance.');
+    }
   };
 
   return (
@@ -52,6 +57,8 @@ export const Navbar = ({ showLogin, setShowLogin, setAdminMode }: NavbarProps) =
       ) : (
         <></>
       )}
+      {auth.currentUser ? 'Logged in as: ' + auth.currentUser.email : 'Not logged in'}
+      {auth.currentUser && <button onClick={() => logout()}>Log Out</button>}
     </nav>
   );
 };
