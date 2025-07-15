@@ -8,5 +8,5 @@ export const HomePage = () => {
     if (window.location.pathname != '/') navigate('/');
   });
 
-  return <>hello world</>;
+  return <div className="main-content">hello world</div>;
 };

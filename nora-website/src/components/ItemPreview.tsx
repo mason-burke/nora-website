@@ -9,6 +9,7 @@ export const ItemPreview = ({ item }: ItemPreviewProps) => {
   const navigate = useNavigate();
   return (
     <div
+      style={{ cursor: 'pointer', background: 'white' }}
       onClick={() => {
         navigate(`/gallery/${item.id}`);
       }}>

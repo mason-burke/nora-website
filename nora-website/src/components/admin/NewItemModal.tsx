@@ -1,6 +1,5 @@
-import { createNewItem } from '../../../firebase/firebase-data';
+import { createNewItem } from '../../firebase/firebase-data';
 import { useRef, useState } from 'react';
-import './NewItemModal.css';
 
 export const NewItemModal = () => {
   const dialogRef = useRef<HTMLDialogElement | null>(null);

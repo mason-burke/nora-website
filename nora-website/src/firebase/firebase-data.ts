@@ -2,16 +2,27 @@ import {
   collection,
   deleteDoc,
   doc,
+  DocumentData,
+  FirestoreDataConverter,
   getCountFromServer,
   getDocs,
   query,
+  QueryDocumentSnapshot,
+  QuerySnapshot,
   setDoc,
   updateDoc,
   where,
   writeBatch
 } from 'firebase/firestore';
 import { db, storage } from './firebase-setup';
-import { getDownloadURL, ref, uploadBytes, UploadResult } from 'firebase/storage';
+import {
+  deleteObject,
+  getDownloadURL,
+  listAll,
+  ref,
+  uploadBytes,
+  UploadResult
+} from 'firebase/storage';
 
 export interface Item {
   id: string;
@@ -23,27 +34,44 @@ export interface Item {
   order: number;
 }
 
+const itemConverter: FirestoreDataConverter<Item> = {
+  toFirestore: (item: Item) => {
+    return item;
+  },
+  fromFirestore: (snapshot: QueryDocumentSnapshot) => {
+    const data = snapshot.data();
+    return {
+      id: snapshot.id,
+      title: data.title,
+      description: data.description,
+      price: data.price,
+      active: data.active,
+      order: data.order,
+      imageURLs: data.imageURLs
+    } as Item;
+  }
+};
+
 export const getItems = async () => {
-  const snapshot = await getDocs(query(collection(db, 'items'), where('active', '==', true)));
+  let snapshot: QuerySnapshot<Item, DocumentData>;
+  try {
+    snapshot = await getDocs(
+      query(collection(db, 'items'), where('active', '==', true)).withConverter(itemConverter)
+    );
+  } catch {
+    return [];
+  }
 
   const items: Item[] = [];
   snapshot.forEach((doc) => {
-    items.push({
-      id: doc.id,
-      title: doc.data()['title'],
-      description: doc.data()['description'],
-      price: doc.data()['price'],
-      active: doc.data()['active'],
-      order: doc.data()['order'],
-      imageURLs: doc.data()['imageURLs']
-    });
+    items.push(doc.data());
   });
   sortItems(items);
   return items;
 };
 
 export const getItemById = (items: Item[], id: string) => {
-  return items.find((val) => val.id === id) || null;
+  return items.find((item) => item.id === id) || null;
 };
 
 export const getNextId = async () => {
@@ -59,17 +87,7 @@ export const createNewItem = async (
   const id = (await getNextId()).toString();
 
   // upload all of the images under id/{imageNumber}
-  const uploads: Promise<UploadResult>[] = [];
-  for (let i = 0; i < images.length; i++) {
-    uploads.push(uploadBytes(ref(storage, `${id}/${i}`), images[i]));
-  }
-  const uploadResults = await Promise.all(uploads);
-
-  const urls: Promise<string>[] = [];
-  uploadResults.forEach((result) => {
-    urls.push(getDownloadURL(result.ref));
-  });
-  const urlResults = await Promise.all(urls);
+  const urlResults = await addImages(title, images);
 
   // create database entry keyed by item id, containing title, desc, and price (query for all images later)
   await setDoc(doc(db, 'items', id), {
@@ -81,13 +99,37 @@ export const createNewItem = async (
   });
 };
 
-export const setInactive = async (id: string): Promise<void> => {
-  await updateDoc(doc(db, 'items', id), { active: false });
+export const setInactive = async (id: string): Promise<boolean> => {
+  try {
+    await updateDoc(doc(db, 'items', id), { active: false });
+    return true;
+  } catch {
+    return false;
+  }
 };
 
-//todo: figure out if we should delete images
-export const deleteItem = async (id: string): Promise<void> => {
-  await deleteDoc(doc(db, 'items', id));
+export const deleteItem = async (id: string): Promise<boolean> => {
+  try {
+    await deleteDoc(doc(db, 'items', id));
+    await deleteAllImages(id);
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+export const updateItem = async (
+  item: Item,
+  newFields: Partial<Item>,
+  imagesToRemove: string[],
+  imagesToAdd: FileList
+) => {
+  //update images
+  const deleteResult = await deleteImages(imagesToRemove);
+
+  const addedUrls = await addImages(item.title, imagesToAdd);
+
+  //update item
 };
 
 export const changeItemOrder = async (item1: Item, item2: Item): Promise<void> => {
@@ -108,4 +150,52 @@ export const sortItems = (items: Item[]): void => {
 */
 export const ItemDetails = async (item: Item): Promise<void> => {
   await setDoc(doc(db, 'items', item.id), item);
+};
+
+const addImages = async (itemId: string, images: FileList): Promise<string[]> => {
+  // upload all of the images under id/{imageNumber}
+  const uploads: Promise<UploadResult>[] = [];
+  for (let i = 0; i < images.length; i++) {
+    uploads.push(uploadBytes(ref(storage, `${itemId}/${i}`), images[i]));
+  }
+  const uploadResults = await Promise.all(uploads);
+
+  const urls: Promise<string>[] = [];
+  uploadResults.forEach((result) => {
+    urls.push(getDownloadURL(result.ref));
+  });
+  const urlResults = await Promise.all(urls);
+
+  return urlResults;
+};
+
+const deleteImages = async (imageURLs: string[]): Promise<boolean> => {
+  try {
+    const toDelete: Promise<void>[] = [];
+
+    for (const imageURL of imageURLs) {
+      toDelete.push(deleteObject(ref(storage, imageURL)));
+    }
+    await Promise.all(toDelete);
+
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+const deleteAllImages = async (itemId: string): Promise<boolean> => {
+  try {
+    const allImages = await listAll(ref(storage, `${itemId}`));
+    const toDelete: Promise<void>[] = [];
+
+    for (const image of allImages.items) {
+      toDelete.push(deleteObject(image));
+    }
+    await Promise.all(toDelete);
+
+    return true;
+  } catch {
+    return false;
+  }
 };
