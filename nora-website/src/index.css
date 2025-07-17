@@ -10,14 +10,13 @@
     'SPAC' 0;
   text-align: center;
 
-  color-scheme: light dark;
   color: rgb(0, 0, 0);
-  /* background-color: #ff75d6; */
   --primary-bg: #fcfbf7;
-  --light-bg: #bfbbae;
+  --light-bg: #d5cfba;
   --font-color: #717171;
   --link-color: #048a11;
   --orange: #e3491a;
+  --middle-dark-orange: #f66538;
   --middle-orange: #f77851;
   --light-orange: #f9cbbd;
   --tan: #9a946f;
@@ -74,11 +73,23 @@ a:hover {
   color: #535bf2;
 }
 
-input {
-  display: block;
+.input-container {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 8px;
+  width: fit-content;
+  align-items: start;
+  margin: auto;
+}
+
+input,
+textarea {
+  /* display: block; */
   width: min-content;
   outline: none;
-  /* border: none; */
+  border: none;
+  line-height: 1.5rem;
+  border-radius: 4px;
   border-bottom: 2px solid grey;
   background: white;
   color: black;
@@ -109,6 +120,10 @@ dialog {
   color: black;
 }
 
+#new-item-dialog {
+  min-width: 17rem;
+}
+
 button {
   border-radius: 8px;
   border: 1px solid transparent;
@@ -117,11 +132,15 @@ button {
   font-weight: 500;
   font-family: inherit;
   background-color: var(--middle-orange);
+  color: white;
   cursor: pointer;
-  transition: border-color 0.1s;
+  transition: background-color 0.13s;
 }
 button:hover {
-  border-color: #646cff;
+  background-color: var(--middle-dark-orange);
+}
+button:active {
+  background-color: var(--orange);
 }
 button:focus,
 button:focus-visible {

@@ -123,13 +123,34 @@ export const updateItem = async (
   newFields: Partial<Item>,
   imagesToRemove: string[],
   imagesToAdd: FileList
-) => {
-  //update images
-  const deleteResult = await deleteImages(imagesToRemove);
+): Promise<boolean> => {
+  try {
+    let existingUrls = item.imageURLs;
 
-  const addedUrls = await addImages(item.title, imagesToAdd);
+    if (imagesToRemove.length) {
+      await deleteImages(imagesToRemove);
+      existingUrls = existingUrls.filter((url) => !imagesToRemove.includes(url));
+    }
 
-  //update item
+    let addedUrls = [];
+
+    if (imagesToAdd.length) {
+      addedUrls = await addImages(item.title, imagesToAdd);
+      existingUrls = [...existingUrls, ...addedUrls];
+    }
+
+    // Merge new fields with updated image URLs
+    const fieldsToUpdate = {
+      ...newFields,
+      imageURLs: existingUrls
+    };
+
+    //update item
+    await updateDoc(doc(db, 'items', item.id), fieldsToUpdate);
+    return true;
+  } catch {
+    return false;
+  }
 };
 
 export const changeItemOrder = async (item1: Item, item2: Item): Promise<void> => {

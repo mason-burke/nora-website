@@ -32,15 +32,22 @@ export const LoginWidget = ({ showLogin, setShowLogin, setAdminMode }: LoginWidg
   };
 
   return (
-    <div style={{ position: 'absolute', top: 10, left: '40%', display: 'flex' }}>
+    <div style={{ position: 'absolute', top: 10, left: '40%', display: 'flex', gap: 20 }}>
       {showLogin ? (
         <>
-          <input type="text" placeholder="Email" onChange={(e) => setEmail(e.target.value)} />
-          <input
-            type="password"
-            placeholder="Password"
-            onChange={(e) => setPassword(e.target.value)}
-          />
+          <div>
+            <label>Email</label>
+            <input type="text" placeholder="Email" onChange={(e) => setEmail(e.target.value)} />
+          </div>
+
+          <div>
+            <label>Password</label>
+            <input
+              type="password"
+              placeholder="Password"
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
           <button type="submit" onClick={() => login()}>
             Login
           </button>
@@ -48,7 +55,7 @@ export const LoginWidget = ({ showLogin, setShowLogin, setAdminMode }: LoginWidg
       ) : (
         <></>
       )}
-      {auth.currentUser ? 'Logged in as: ' + auth.currentUser.email : 'Not logged in'}
+      {auth.currentUser && 'Logged in as: ' + auth.currentUser.email}
       {auth.currentUser && <button onClick={handleLogout}>Log Out</button>}
     </div>
   );

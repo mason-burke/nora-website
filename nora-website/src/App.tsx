@@ -21,6 +21,7 @@ const App = () => {
   useEffect(() => {
     const loadGallery = async () => {
       setItems(await getItems());
+      console.log('loaded items');
     };
 
     loadGallery();
