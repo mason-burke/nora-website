@@ -8,13 +8,15 @@ export interface ItemPreviewProps {
 export const ItemPreview = ({ item }: ItemPreviewProps) => {
   const navigate = useNavigate();
   return (
-    <div
-      style={{ cursor: 'pointer', background: 'white' }}
-      onClick={() => {
-        navigate(`/gallery/${item.id}`);
-      }}>
-      <h3>{item.title}</h3>
-      <img src={item.imageURLs[0]} height={200} />
+    <div className="item-preview-wrapper">
+      <div
+        className="item-preview"
+        onClick={() => {
+          navigate(`/gallery/${item.id}`);
+        }}>
+        <img src={item.imageURLs[0]} height={200} />
+        <h3>{item.title}</h3>
+      </div>
     </div>
   );
 };

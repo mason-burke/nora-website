@@ -12,12 +12,14 @@
 
   color: rgb(0, 0, 0);
   --primary-bg: #fcfbf7;
+  --light-light-bg: #fbf8ea;
   --light-bg: #d5cfba;
   --font-color: #717171;
   --link-color: #048a11;
   --orange: #e3491a;
   --middle-dark-orange: #f66538;
   --middle-orange: #f77851;
+  --light-middle-orange: #fdc1af;
   --light-orange: #f9cbbd;
   --tan: #9a946f;
   color: black;
@@ -145,4 +147,56 @@ button:active {
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
+}
+
+button:disabled {
+  background-color: var(--light-middle-orange);
+}
+
+.close-button {
+  align-self: end;
+  position: fixed;
+  height: 30px;
+  width: 30px;
+  padding: 0;
+}
+
+.image-edit-button {
+  background-color: #b1b1b1;
+  position: absolute;
+  height: 25px;
+  width: 25px;
+  padding: 0;
+
+  &:hover {
+    background-color: #a0a0a0;
+  }
+}
+
+.preview-image.selected {
+  outline: 2px solid var(--middle-orange);
+}
+
+.item-preview {
+  cursor: pointer;
+  background-color: var(--primary-bg);
+  padding: 10px;
+  border-radius: 10px;
+  transition: background-color 0.13s;
+
+  &:hover {
+    background: var(--light-light-bg);
+  }
+}
+
+.item-preview-wrapper {
+  background-color: var(--primary-bg);
+  padding: 5px;
+}
+
+.item-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  width: 70%;
 }

@@ -31,7 +31,7 @@ export const ItemDetails = ({ item }: ItemDetailsProps) => {
           </button>
         )}
         <button
-          style={{ alignSelf: 'end' }}
+          className="close-button"
           onClick={() => {
             modalRef.current?.close();
           }}>
@@ -39,6 +39,7 @@ export const ItemDetails = ({ item }: ItemDetailsProps) => {
         </button>
         {item && <ImageCarousel urls={item.imageURLs} />}
         <div>{item?.title}</div>
+        <div>{item?.description}</div>
         <span>${item?.price}</span>
       </div>
     </dialog>

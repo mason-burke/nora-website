@@ -19,9 +19,13 @@ export const GalleryPage = ({ items }: GalleryPageProps) => {
   return (
     <>
       {adminMode && <NewItemModal />}
-      {items.map((item) => {
-        return <ItemPreview item={item} key={item.id} />;
-      })}
+      <div
+        className="item-container"
+        style={{ display: 'grid', gap: 1, backgroundColor: 'lightgrey' }}>
+        {items.map((item) => (
+          <ItemPreview item={item} key={item.id} />
+        ))}
+      </div>
       <ItemDetails item={selectedItem} />
     </>
   );
