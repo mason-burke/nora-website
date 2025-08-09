@@ -23,6 +23,7 @@ import {
   uploadBytes,
   UploadResult
 } from 'firebase/storage';
+import { nanoid } from 'nanoid';
 
 export interface Item {
   id: string;
@@ -84,7 +85,8 @@ export const createNewItem = async (
   price: string,
   images: FileList
 ): Promise<void> => {
-  const id = (await getNextId()).toString();
+  // const id = (await getNextId()).toString();
+  const id = nanoid();
 
   // upload all of the images under id/{imageNumber}
   const urlResults = await addImages(title, images);
@@ -173,8 +175,13 @@ export const ItemDetails = async (item: Item): Promise<void> => {
   await setDoc(doc(db, 'items', item.id), item);
 };
 
+/**
+ * adds images under itemId/{randomid}
+ * @param itemId
+ * @param images
+ * @returns array of image urls
+ */
 const addImages = async (itemId: string, images: FileList): Promise<string[]> => {
-  // upload all of the images under id/{imageNumber}
   const uploads: Promise<UploadResult>[] = [];
   for (let i = 0; i < images.length; i++) {
     uploads.push(uploadBytes(ref(storage, `${itemId}/${i}`), images[i]));
@@ -207,7 +214,7 @@ const deleteImages = async (imageURLs: string[]): Promise<boolean> => {
 
 const deleteAllImages = async (itemId: string): Promise<boolean> => {
   try {
-    const allImages = await listAll(ref(storage, `${itemId}`));
+    const allImages = await listAll(ref(storage, itemId));
     const toDelete: Promise<void>[] = [];
 
     for (const image of allImages.items) {
