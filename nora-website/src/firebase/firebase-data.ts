@@ -183,7 +183,7 @@ export const ItemDetails = async (item: Item): Promise<void> => {
  * @param images
  * @returns array of image urls
  */
-const addImages = async (itemId: string, images: FileList): Promise<string[]> => {
+export const addImages = async (itemId: string, images: FileList): Promise<string[]> => {
   const uploads: Promise<UploadResult>[] = [];
   for (let i = 0; i < images.length; i++) {
     uploads.push(uploadBytes(ref(storage, `${itemId}/${i}`), images[i]));
@@ -199,7 +199,7 @@ const addImages = async (itemId: string, images: FileList): Promise<string[]> =>
   return urlResults;
 };
 
-const deleteImages = async (imageURLs: string[]): Promise<boolean> => {
+export const deleteImages = async (imageURLs: string[]): Promise<boolean> => {
   try {
     const toDelete: Promise<void>[] = [];
 

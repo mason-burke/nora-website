@@ -15,10 +15,7 @@ export const ConfirmableButton = ({
 }: ConfirmableButtonProps) => {
   const [isPrimed, setIsPrimed] = useState<boolean>(false);
 
-  const onClick = (e: MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-
+  const onClick = () => {
     if (isPrimed) {
       onConfirm();
       return;
@@ -33,7 +30,11 @@ export const ConfirmableButton = ({
 
   return (
     <button
-      onClick={(e) => onClick(e)}
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        onClick();
+      }}
       onMouseLeave={onMouseLeave}
       className={`${isPrimed ? 'confirmable-primed' : ''} ${classList}`}
       style={{ width: 'fit-content' }}>
