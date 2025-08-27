@@ -1,24 +1,34 @@
-import { useParams } from 'react-router-dom';
-import { NewItemModal } from '../components/admin/NewItemModal';
-import { Item, getItemById } from '../firebase/firebase-data';
-import { useContext, useMemo } from 'react';
+import { Route, Routes, useNavigate } from 'react-router-dom';
+import { NewItemView } from '../components/admin/NewItemView';
+import { useContext } from 'react';
 import { ItemPreview } from '../components/ItemPreview';
 import { ItemDetails } from '../components/ItemDetails';
-import { adminModeContext } from '../helpers/contexts';
+import { adminModeContext, itemsContext } from '../helpers/contexts';
 
-export interface GalleryPageProps {
-  items: Item[];
-}
-
-export const GalleryPage = ({ items }: GalleryPageProps) => {
+export const GalleryPage = () => {
   const adminMode = useContext(adminModeContext);
-
-  const id = useParams()['id'] ?? '';
-  const selectedItem = useMemo(() => getItemById(items, id), [items, id]);
+  const items = useContext(itemsContext);
+  const navigate = useNavigate();
 
   return (
-    <>
-      {adminMode && <NewItemModal />}
+    <div>
+      {adminMode && (
+        <button
+          style={{ position: 'absolute', bottom: 30, right: 100 }}
+          onClick={() => {
+            navigate('/gallery/new');
+          }}>
+          +
+        </button>
+      )}
+
+      <Routes>
+        <Route path="/:id" element={<ItemDetails />} />
+        {adminMode && <Route path="/new" element={<NewItemView />} />}
+      </Routes>
+
+      {!items.length && 'Nothing to see here...'}
+
       <div
         className="item-container"
         style={{ display: 'grid', gap: 1, backgroundColor: 'lightgrey' }}>
@@ -26,7 +36,6 @@ export const GalleryPage = ({ items }: GalleryPageProps) => {
           <ItemPreview item={item} key={item.id} />
         ))}
       </div>
-      <ItemDetails item={selectedItem} />
-    </>
+    </div>
   );
 };

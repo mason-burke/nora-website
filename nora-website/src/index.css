@@ -137,6 +137,7 @@ button {
   color: white;
   cursor: pointer;
   transition: background-color 0.13s;
+  width: fit-content;
 }
 button:hover {
   background-color: var(--middle-dark-orange);
@@ -147,6 +148,14 @@ button:active {
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
+}
+
+.danger {
+  background-color: rgb(255, 53, 53);
+
+  &:hover {
+    background-color: rgb(186, 39, 39);
+  }
 }
 
 button:disabled {
@@ -187,6 +196,17 @@ button:disabled {
   &:hover {
     background: var(--light-light-bg);
   }
+}
+
+.details-overlay {
+  position: absolute;
+  top: 50px; /* leave space for navbar */
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: white;
+  padding: 1rem;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.15);
 }
 
 .item-preview-wrapper {

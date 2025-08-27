@@ -85,11 +85,10 @@ export const createNewItem = async (
   price: string,
   images: FileList
 ): Promise<void> => {
-  // const id = (await getNextId()).toString();
   const id = nanoid();
 
   // upload all of the images under id/{imageNumber}
-  const urlResults = await addImages(title, images);
+  const urlResults = await addImages(id, images);
 
   // create database entry keyed by item id, containing title, desc, and price (query for all images later)
   await setDoc(doc(db, 'items', id), {
@@ -120,19 +119,22 @@ export const deleteItem = async (id: string): Promise<boolean> => {
   }
 };
 
+//todo: determine if the delete all approach is bad
 export const updateItem = async (
   item: Item,
   newFields: Partial<Item>,
-  imagesToRemove: string[],
   imagesToAdd: FileList
 ): Promise<boolean> => {
   try {
-    let existingUrls = item.imageURLs;
+    // let existingUrls = item.imageURLs;
+    let existingUrls: string[] = [];
 
-    if (imagesToRemove.length) {
-      await deleteImages(imagesToRemove);
-      existingUrls = existingUrls.filter((url) => !imagesToRemove.includes(url));
-    }
+    await deleteAllImages(item.id);
+
+    // if (imagesToRemove.length) {
+    //   await deleteImages(imagesToRemove);
+    //   existingUrls = existingUrls.filter((url) => !imagesToRemove.includes(url));
+    // }
 
     let addedUrls = [];
 
@@ -205,6 +207,7 @@ const deleteImages = async (imageURLs: string[]): Promise<boolean> => {
       toDelete.push(deleteObject(ref(storage, imageURL)));
     }
     await Promise.all(toDelete);
+    console.log(toDelete);
 
     return true;
   } catch {
@@ -219,6 +222,7 @@ const deleteAllImages = async (itemId: string): Promise<boolean> => {
 
     for (const image of allImages.items) {
       toDelete.push(deleteObject(image));
+      console.log(toDelete);
     }
     await Promise.all(toDelete);
 

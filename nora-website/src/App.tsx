@@ -4,7 +4,7 @@ import { HomePage } from './routes/HomePage';
 import { ContactPage } from './routes/ContactPage';
 import { Navbar } from './components/Navbar';
 import { auth, db } from './firebase/firebase-setup';
-import { adminModeContext } from './helpers/contexts';
+import { adminModeContext, refreshItemsContext, itemsContext } from './helpers/contexts';
 import { useEffect, useState } from 'react';
 import { doc, getDoc } from 'firebase/firestore';
 import './index.css';
@@ -16,6 +16,7 @@ import { getItems, Item } from './firebase/firebase-data';
 const App = () => {
   const [showLogin, setShowLogin] = useState<boolean>(false);
   const [adminMode, setAdminMode] = useState<boolean>(false);
+  const [shouldRefreshItems, setShouldRefreshItems] = useState<boolean>(true);
   const [items, setItems] = useState<Item[]>([]);
 
   useEffect(() => {
@@ -24,8 +25,11 @@ const App = () => {
       console.log('loaded items');
     };
 
-    loadGallery();
-  }, []);
+    if (shouldRefreshItems) {
+      loadGallery();
+      setShouldRefreshItems(false);
+    }
+  }, [shouldRefreshItems]);
 
   useEffect(() => {
     const loadPermissions = async (): Promise<void> => {
@@ -60,16 +64,19 @@ const App = () => {
       </div>
       <Navbar />
       <LoginWidget showLogin={showLogin} setShowLogin={setShowLogin} setAdminMode={setAdminMode} />
-      <adminModeContext.Provider value={adminMode}>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/gallery" element={<GalleryPage items={items} />} />
-          <Route path="/gallery/:id" element={<GalleryPage items={items} />} />
-          <Route path="/contact" element={<ContactPage />} />
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="*" element={<ErrorPage />} />
-        </Routes>
-      </adminModeContext.Provider>
+      <refreshItemsContext.Provider value={() => setShouldRefreshItems(true)}>
+        <adminModeContext.Provider value={adminMode}>
+          <itemsContext.Provider value={items}>
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/gallery/*" element={<GalleryPage />} />
+              <Route path="/contact" element={<ContactPage />} />
+              <Route path="/about" element={<AboutPage />} />
+              <Route path="*" element={<ErrorPage />} />
+            </Routes>
+          </itemsContext.Provider>
+        </adminModeContext.Provider>
+      </refreshItemsContext.Provider>
     </BrowserRouter>
   );
 };
