@@ -51,7 +51,7 @@ const App = () => {
       <div className="headers" style={{ fontSize: '2rem', position: 'fixed', top: 20, left: '5%' }}>
         Nora Barnacle
         <img
-          src="/edit-outline.png"
+          src="/nora-website/edit-outline.png"
           draggable={false}
           style={{
             position: 'absolute',
