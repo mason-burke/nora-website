@@ -47,7 +47,7 @@ const App = () => {
   }, [adminMode]);
 
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/nora-website">
       <div className="headers" style={{ fontSize: '2rem', position: 'fixed', top: 20, left: '5%' }}>
         Nora Barnacle
         <img
