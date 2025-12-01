@@ -29,7 +29,6 @@ export interface Item {
   id: string;
   title: string;
   description: string;
-  price: number;
   imageURLs: string[];
   active: boolean;
   order: number;
@@ -39,17 +38,16 @@ const itemConverter: FirestoreDataConverter<Item> = {
   toFirestore: (item: Item) => {
     return item;
   },
-  fromFirestore: (snapshot: QueryDocumentSnapshot) => {
+  fromFirestore: (snapshot: QueryDocumentSnapshot): Item => {
     const data = snapshot.data();
     return {
       id: snapshot.id,
       title: data.title,
       description: data.description,
-      price: data.price,
       active: data.active,
       order: data.order,
       imageURLs: data.imageURLs
-    } as Item;
+    };
   }
 };
 
@@ -82,7 +80,6 @@ export const getNextId = async () => {
 export const createNewItem = async (
   title: string,
   description: string,
-  price: string,
   images: FileList
 ): Promise<void> => {
   const id = nanoid();
@@ -90,14 +87,16 @@ export const createNewItem = async (
   // upload all of the images under id/{imageNumber}
   const urlResults = await addImages(id, images);
 
-  // create database entry keyed by item id, containing title, desc, and price (query for all images later)
-  await setDoc(doc(db, 'items', id), {
+  // create database entry keyed by item id, containing title, desc (query for all images later)
+  const item: Item = {
+    id: id,
     title: title,
+    order: 0,
     description: description,
-    price: price,
     imageURLs: urlResults,
     active: true
-  });
+  };
+  await setDoc(doc(db, 'items', id), item);
 };
 
 export const setInactive = async (id: string): Promise<boolean> => {

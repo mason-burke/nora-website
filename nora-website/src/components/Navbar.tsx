@@ -12,21 +12,9 @@ export const Navbar = () => {
   }, [location]);
 
   return (
-    <nav
-      style={{
-        position: 'fixed',
-        top: 0,
-        right: '10%',
-        height: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'end',
-        justifyContent: 'center',
-        gap: 10
-      }}>
+    <nav>
       <NavLink url="/" currentUrl={currentUrl} text="Home" />
       <NavLink url="/gallery" currentUrl={currentUrl} text="Work" />
-      <NavLink url="/contact" currentUrl={currentUrl} text="Contact" />
       <NavLink url="/about" currentUrl={currentUrl} text="About" />
     </nav>
   );

@@ -106,10 +106,9 @@ export const ItemDetailsModifier = ({ item }: ItemDetailsModifierProps) => {
 
     const title = data.get('title')?.toString();
     const description = data.get('description')?.toString();
-    const price = data.get('price')?.toString();
     const images = fileInputRef.current?.files;
 
-    if (!(title && description && price && images)) {
+    if (!(title && description && images)) {
       submitButtonRef.current.disabled = false;
       return;
     }
@@ -120,7 +119,7 @@ export const ItemDetailsModifier = ({ item }: ItemDetailsModifierProps) => {
     if (item) {
       await updateItem(item, {}, images);
     } else {
-      await createNewItem(title, description, price, images);
+      await createNewItem(title, description, images);
     }
 
     submitButtonRef.current.classList.remove('loading');
@@ -149,19 +148,6 @@ export const ItemDetailsModifier = ({ item }: ItemDetailsModifierProps) => {
           <textarea name="description" id="description" defaultValue={item?.description} />
         </div>
 
-        <div className="input-container">
-          <label htmlFor="price">Price</label>
-          <div>
-            ${' '}
-            <input
-              style={{ display: 'inline' }}
-              name="price"
-              id="price"
-              placeholder="0.00"
-              defaultValue={item?.price}
-            />
-          </div>
-        </div>
         <button
           className="input-container"
           style={{ marginTop: 4 }}

@@ -29,9 +29,7 @@ export const GalleryPage = () => {
 
       {!items.length && 'Nothing to see here...'}
 
-      <div
-        className="item-container"
-        style={{ display: 'grid', gap: 1, backgroundColor: 'lightgrey' }}>
+      <div className="item-container" style={{ display: 'grid', gap: 1 }}>
         {items.map((item) => (
           <ItemPreview item={item} key={item.id} />
         ))}

@@ -9,7 +9,7 @@ export interface NavLinkProps {
 const NavLink = ({ url, currentUrl, text }: NavLinkProps) => {
   const isCurrent = url === currentUrl;
   return (
-    <div>
+    <div style={{ display: 'flex' }}>
       {isCurrent && <span className="headers">{'\u00BB '}</span>}
       <Link className="headers" to={url}>
         {text}

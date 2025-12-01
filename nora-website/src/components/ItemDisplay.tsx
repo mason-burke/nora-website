@@ -11,7 +11,6 @@ export const ItemDisplay = ({ item }: ItemDisplayProps) => {
       <ImageCarousel urls={item.imageURLs} />
       <div>{item.title}</div>
       <div>{item.description}</div>
-      <span>${item.price}</span>
     </div>
   );
 };
