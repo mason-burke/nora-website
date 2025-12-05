@@ -6,11 +6,11 @@ import { auth, db } from './firebase/firebase-setup';
 import { adminModeContext, refreshItemsContext, itemsContext } from './helpers/contexts';
 import { useEffect, useState } from 'react';
 import { doc, getDoc } from 'firebase/firestore';
-import './index.css';
 import { ErrorPage } from './routes/ErrorPage';
 import { AboutPage } from './routes/AboutPage';
 import { LoginWidget } from './components/admin/LoginWidget';
 import { getItems, Item } from './firebase/firebase-data';
+import './index.css';
 
 const App = () => {
   const [showLogin, setShowLogin] = useState<boolean>(false);
