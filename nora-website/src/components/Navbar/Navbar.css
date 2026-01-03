@@ -1,0 +1,33 @@
+.navlinks {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 40px;
+  font-size: 2rem;
+}
+
+.navlinks > div {
+  padding: 10px;
+}
+
+nav {
+  position: fixed;
+  padding-top: 20px;
+  width: 100%;
+  top: 0;
+  left: 0;
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  background: var(--light-light-bg);
+  height: 72px;
+}
+
+.norabarnacle {
+  font-size: 2rem;
+  color: var(--orange);
+  font-weight: 500;
+}
+
+.navlink {
+  height: fit-content;
+}

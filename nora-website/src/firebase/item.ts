@@ -2,13 +2,10 @@ import {
   collection,
   deleteDoc,
   doc,
-  DocumentData,
   FirestoreDataConverter,
-  getCountFromServer,
   getDocs,
   query,
   QueryDocumentSnapshot,
-  QuerySnapshot,
   setDoc,
   updateDoc,
   where,
@@ -25,19 +22,17 @@ import {
 } from 'firebase/storage';
 import { nanoid } from 'nanoid';
 
-export interface Item {
+export type Item = {
   id: string;
   title: string;
   description: string;
   imageURLs: string[];
   active: boolean;
   order: number;
-}
+};
 
 const itemConverter: FirestoreDataConverter<Item> = {
-  toFirestore: (item: Item) => {
-    return item;
-  },
+  toFirestore: (item: Item) => item,
   fromFirestore: (snapshot: QueryDocumentSnapshot): Item => {
     const data = snapshot.data();
     return {
@@ -52,32 +47,24 @@ const itemConverter: FirestoreDataConverter<Item> = {
 };
 
 export const getItems = async () => {
-  let snapshot: QuerySnapshot<Item, DocumentData>;
   try {
-    snapshot = await getDocs(
+    const snapshot = await getDocs(
       query(collection(db, 'items'), where('active', '==', true)).withConverter(itemConverter)
     );
+
+    const items = snapshot.docs.map((d) => d.data());
+    sortItems(items);
+    return items;
   } catch {
     return [];
   }
-
-  const items: Item[] = [];
-  snapshot.forEach((doc) => {
-    items.push(doc.data());
-  });
-  sortItems(items);
-  return items;
 };
 
 export const getItemById = (items: Item[], id: string) => {
   return items.find((item) => item.id === id) || null;
 };
 
-export const getNextId = async () => {
-  return (await getCountFromServer(collection(db, 'items'))).data().count + 1;
-};
-
-export const createNewItem = async (
+export const createItem = async (
   title: string,
   description: string,
   images: FileList
@@ -97,15 +84,6 @@ export const createNewItem = async (
     active: true
   };
   await setDoc(doc(db, 'items', id), item);
-};
-
-export const setInactive = async (id: string): Promise<boolean> => {
-  try {
-    await updateDoc(doc(db, 'items', id), { active: false });
-    return true;
-  } catch {
-    return false;
-  }
 };
 
 export const deleteItem = async (id: string): Promise<boolean> => {
@@ -156,7 +134,7 @@ export const updateItem = async (
   }
 };
 
-export const changeItemOrder = async (item1: Item, item2: Item): Promise<void> => {
+const changeItemOrder = async (item1: Item, item2: Item): Promise<void> => {
   if (item1.id === item2.id) return;
 
   const batch = writeBatch(db);
@@ -182,23 +160,20 @@ export const ItemDetails = async (item: Item): Promise<void> => {
  * @param images
  * @returns array of image urls
  */
-export const addImages = async (itemId: string, images: FileList): Promise<string[]> => {
+const addImages = async (itemId: string, images: FileList): Promise<string[]> => {
   const uploads: Promise<UploadResult>[] = [];
   for (let i = 0; i < images.length; i++) {
-    uploads.push(uploadBytes(ref(storage, `${itemId}/${i}`), images[i]));
+    uploads.push(uploadBytes(ref(storage, `items/${itemId}/${i}`), images[i]));
   }
   const uploadResults = await Promise.all(uploads);
 
-  const urls: Promise<string>[] = [];
-  uploadResults.forEach((result) => {
-    urls.push(getDownloadURL(result.ref));
-  });
+  const urls = uploadResults.map((r) => getDownloadURL(r.ref));
   const urlResults = await Promise.all(urls);
 
   return urlResults;
 };
 
-export const deleteImages = async (imageURLs: string[]): Promise<boolean> => {
+const deleteImages = async (imageURLs: string[]): Promise<boolean> => {
   try {
     const toDelete: Promise<void>[] = [];
 
@@ -229,4 +204,12 @@ const deleteAllImages = async (itemId: string): Promise<boolean> => {
   } catch {
     return false;
   }
+};
+
+export default {
+  getItems,
+  getItemById,
+  createItem,
+  deleteItem,
+  changeItemOrder
 };

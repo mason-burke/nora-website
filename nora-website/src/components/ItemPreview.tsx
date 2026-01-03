@@ -1,4 +1,4 @@
-import { Item } from '../firebase/firebase-data';
+import { Item } from '../firebase/item';
 import { useNavigate } from 'react-router-dom';
 
 export interface ItemPreviewProps {

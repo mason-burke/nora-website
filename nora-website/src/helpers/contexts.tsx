@@ -1,5 +1,5 @@
 import { createContext } from 'react';
-import { Item } from '../firebase/firebase-data';
+import { Item } from '../firebase/item';
 
 export const adminModeContext = createContext<boolean>(false);
 export const refreshItemsContext = createContext<() => void>(() => {});

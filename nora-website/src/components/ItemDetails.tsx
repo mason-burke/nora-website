@@ -1,5 +1,5 @@
 import { useContext, useMemo, useState } from 'react';
-import { getItemById } from '../firebase/firebase-data';
+import { getItemById } from '../firebase/item';
 import { useNavigate, useParams } from 'react-router-dom';
 import { adminModeContext, itemsContext } from '../helpers/contexts';
 import { ItemDetailsModifier } from './admin/ItemDetailsModifier';

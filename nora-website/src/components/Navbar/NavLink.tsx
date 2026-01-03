@@ -9,13 +9,15 @@ export interface NavLinkProps {
 const NavLink = ({ url, currentUrl, text }: NavLinkProps) => {
   const isCurrent = url === currentUrl;
   return (
-    <div style={{ display: 'flex' }}>
+    <div className="navlink" style={{ display: 'flex' }}>
       {isCurrent && (
-        <span className="headers" style={{ position: 'absolute', transform: 'translateX(-15px)' }}>
+        <span
+          className="headers"
+          style={{ position: 'absolute', transform: 'translateX(-15px)', height: 'fit-content' }}>
           {'\u00BB '}
         </span>
       )}
-      <Link className="headers" to={url}>
+      <Link className="headers" style={{ height: 'fit-content' }} to={url}>
         {text}
       </Link>
     </div>

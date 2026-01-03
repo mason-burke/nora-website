@@ -1,4 +1,4 @@
-import { createNewItem, deleteItem, Item, updateItem } from '../../firebase/firebase-data';
+import { createItem, deleteItem, Item, updateItem } from '../../firebase/item';
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { ConfirmableButton } from './ConfirmableButton';
 import { refreshItemsContext } from '../../helpers/contexts';
@@ -117,9 +117,9 @@ export const ItemDetailsModifier = ({ item }: ItemDetailsModifierProps) => {
     submitButtonRef.current.innerHTML = 'Working...';
 
     if (item) {
-      await updateItem(item, {}, images);
+      await updateItem(item, { title, description }, images);
     } else {
-      await createNewItem(title, description, images);
+      await createItem(title, description, images);
     }
 
     submitButtonRef.current.classList.remove('loading');

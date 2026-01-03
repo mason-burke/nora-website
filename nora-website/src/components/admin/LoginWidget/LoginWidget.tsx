@@ -1,6 +1,7 @@
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth, logout } from '../../firebase/firebase-setup';
+import { auth, logout } from '../../../firebase/firebase-setup';
 import { Dispatch, SetStateAction, useState } from 'react';
+import './LoginWidget.css';
 
 export interface LoginWidgetProps {
   showLogin: boolean;
@@ -83,7 +84,7 @@ export const LoginWidget = ({ showLogin, setShowLogin, setAdminMode }: LoginWidg
       </dialog>
       <div style={{ position: 'absolute', top: 20, right: 20, display: 'flex', gap: 20 }}>
         {showLogin && !isOpen && <button onClick={() => setIsOpen(true)}>Log In</button>}
-        {auth.currentUser && 'Logged in as: ' + auth.currentUser.email}
+        {auth.currentUser && <span className="adminchip">ADMIN</span>}
         {auth.currentUser && <button onClick={handleLogout}>Log Out</button>}
       </div>
     </>

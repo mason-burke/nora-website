@@ -1,15 +1,15 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { GalleryPage } from './routes/GalleryPage';
 import { HomePage } from './routes/HomePage';
-import { Navbar } from './components/Navbar';
+import { Navbar } from './components/Navbar/Navbar';
 import { auth, db } from './firebase/firebase-setup';
 import { adminModeContext, refreshItemsContext, itemsContext } from './helpers/contexts';
 import { useEffect, useState } from 'react';
 import { doc, getDoc } from 'firebase/firestore';
 import { ErrorPage } from './routes/ErrorPage';
 import { AboutPage } from './routes/AboutPage';
-import { LoginWidget } from './components/admin/LoginWidget';
-import { getItems, Item } from './firebase/firebase-data';
+import { LoginWidget } from './components/admin/LoginWidget/LoginWidget';
+import { getItems, Item } from './firebase/item';
 import './index.css';
 
 const App = () => {
@@ -47,23 +47,7 @@ const App = () => {
 
   return (
     <BrowserRouter basename="/nora-website">
-      <div className="headers" style={{ fontSize: '2rem', position: 'fixed', top: 20, left: '5%' }}>
-        <div>
-          Nora Barnacle
-          <img
-            src="/nora-website/edit-outline.png"
-            draggable={false}
-            style={{
-              position: 'absolute',
-              right: -23,
-              top: -23,
-              transform: 'scale(0.875)',
-              zIndex: -1
-            }}
-          />
-        </div>
-        <Navbar />
-      </div>
+      <Navbar />
       <LoginWidget showLogin={showLogin} setShowLogin={setShowLogin} setAdminMode={setAdminMode} />
       <refreshItemsContext.Provider value={() => setShouldRefreshItems(true)}>
         <adminModeContext.Provider value={adminMode}>

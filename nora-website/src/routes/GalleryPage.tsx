@@ -11,7 +11,7 @@ export const GalleryPage = () => {
   const navigate = useNavigate();
 
   return (
-    <div>
+    <div style={{ paddingTop: '8rem' }}>
       {adminMode && (
         <button
           style={{ position: 'absolute', bottom: 30, right: 100 }}
@@ -29,7 +29,7 @@ export const GalleryPage = () => {
 
       {!items.length && 'Nothing to see here...'}
 
-      <div className="item-container" style={{ display: 'grid', gap: 1 }}>
+      <div className="item-container main-content" style={{ display: 'grid', gap: 1 }}>
         {items.map((item) => (
           <ItemPreview item={item} key={item.id} />
         ))}
